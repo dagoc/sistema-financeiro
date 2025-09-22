@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Financeiro Pessoal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+            color: white;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid;
+        }
+
+        .summary-card.receitas {
+            border-left-color: #28a745;
+        }
+
+        .summary-card.despesas {
+            border-left-color: #dc3545;
+        }
+
+        .summary-card.saldo {
+            border-left-color: #667eea;
+        }
+
+        .summary-card h3 {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-card.receitas .value {
+            color: #28a745;
+        }
+
+        .summary-card.despesas .value {
+            color: #dc3545;
+        }
+
+        .summary-card.saldo .value {
+            color: #667eea;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .valor-receita {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .valor-despesa {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .month-selector {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .alert-info {
+            background: #cce7ff;
+            color: #004085;
+            border-left: 4px solid #667eea;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .backup-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .month-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .tipo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Sistema Financeiro Pessoal</h1>
+            <p>Gerencie suas finanças com inteligência e simplicidade</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="showTab('configuracao')">⚙️ Configuração</button>
+            <button class="nav-tab" onclick="showTab('receitas')">💰 Receitas</button>
+            <button class="nav-tab" onclick="showTab('despesas')">💸 Despesas</button>
+            <button class="nav-tab" onclick="showTab('relatorios')">📈 Relatórios</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="month-selector">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Mês/Ano:</label>
+                    <select id="currentMonth" class="form-control" onchange="updateDashboard()" style="width: auto; display: inline-block; margin-right: 15px;">
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="goToPreviousMonth()">◀ Mês Anterior</button>
+                <button class="btn btn-primary" onclick="goToNextMonth()">Próximo Mês ▶</button>
+                <button class="btn btn-success" onclick="goToCurrentMonth()">📅 Mês Atual</button>
+            </div>
+
+            <div class="summary-cards">
+                <div class="summary-card receitas">
+                    <h3>Total de Receitas</h3>
+                    <div class="value" id="totalReceitas">R$ 0,00</div>
+                    <small id="receitasCount">0 lançamentos</small>
+                </div>
+                <div class="summary-card despesas">
+                    <h3>Total de Despesas</h3>
+                    <div class="value" id="totalDespesas">R$ 0,00</div>
+                    <small id="despesasCount">0 lançamentos</small>
+                </div>
+                <div class="summary-card saldo">
+                    <h3>Saldo do Mês</h3>
+                    <div class="value" id="saldoMes">R$ 0,00</div>
+                </div>
+                <div class="summary-card saldo">
+                    <h3>Saldo Acumulado</h3>
+                    <div class="value" id="saldoAcumulado">R$ 0,00</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">💰 Receitas do Mês</div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="receitasList"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">💸 Despesas do Mês</div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="despesasList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuração Tab -->
+        <div id="configuracao" class="tab-content">
+            <div class="card">
+                <div class="card-header">⚙️ Configuração Inicial</div>
+                <div class="card-body">
+                    <div id="configStatus"></div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Mês de Início:</label>
+                            <select id="mesInicio" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ano de Início:</label>
+                            <select id="anoInicio" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saldo Inicial:</label>
+                        <input type="number" id="saldoInicial" class="form-control" placeholder="R$ 0,00" step="0.01">
+                    </div>
+                    <button class="btn btn-success" onclick="configurarSistema()">💾 Salvar Configuração</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔄 Backup e Dados</div>
+                <div class="card-body">
+                    <div class="backup-section">
+                        <h4>💾 Backup dos Dados</h4>
+                        <p>Faça backup regular dos seus dados para não perder informações importantes.</p>
+                        <button class="btn btn-warning" onclick="exportData()">📤 Exportar Dados</button>
+                        <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📥 Importar Dados</button>
+                        <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(this)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receitas Tab -->
+        <div id="receitas" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">➕ Adicionar Receita</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Tipo de Receita:</label>
+                            <select id="tipoReceita" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor:</label>
+                            <input type="number" id="valorReceita" class="form-control" placeholder="R$ 0,00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Mês/Ano:</label>
+                            <select id="mesReceita" class="form-control"></select>
+                        </div>
+                        <button class="btn btn-success" onclick="adicionarReceita()">💰 Adicionar Receita</button>
+                        <button class="btn btn-warning" onclick="showModal('modalLancamentoMassa', 'receita')">📊 Lançamento em Massa</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">🏷️ Gerenciar Tipos de Receita</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Novo Tipo:</label>
+                            <input type="text" id="novoTipoReceita" class="form-control" placeholder="Ex: Salário, Freelance...">
+                        </div>
+                        <button class="btn btn-primary" onclick="criarTipoReceita()">➕ Criar Tipo</button>
+                        <div id="tiposReceitaList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Despesas Tab -->
+        <div id="despesas" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">➕ Adicionar Despesa</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Tipo de Despesa:</label>
+                            <select id="tipoDespesa" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor:</label>
+                            <input type="number" id="valorDespesa" class="form-control" placeholder="R$ 0,00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Mês/Ano:</label>
+                            <select id="mesDespesa" class="form-control"></select>
+                        </div>
+                        <button class="btn btn-success" onclick="adicionarDespesa()">💸 Adicionar Despesa</button>
+                        <button class="btn btn-warning" onclick="showModal('modalLancamentoMassa', 'despesa')">📊 Lançamento em Massa</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">🏷️ Gerenciar Tipos de Despesa</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Novo Tipo:</label>
+                            <input type="text" id="novoTipoDespesa" class="form-control" placeholder="Ex: Aluguel, Mercado...">
+                        </div>
+                        <button class="btn btn-primary" onclick="criarTipoDespesa()">➕ Criar Tipo</button>
+                        <div id="tiposDespesaList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relatórios Tab -->
+        <div id="relatorios" class="tab-content">
+            <div class="card">
+                <div class="card-header">📈 Visão Anual</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Ano:</label>
+                        <select id="anoRelatorio" class="form-control" onchange="gerarRelatorioAnual()" style="width: 200px; display: inline-block;">
+                        </select>
+                    </div>
+                    <div id="relatorioAnual"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Lançamento em Massa -->
+    <div id="modalLancamentoMassa" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('modalLancamentoMassa')">&times;</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Lançamento em Massa</h2>
+                <p>Adicione o mesmo valor em vários meses selecionados</p>
+            </div>
+            <div class="form-group">
+                <label>Tipo:</label>
+                <select id="tipoMassa" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label>Valor:</label>
+                <input type="number" id="valorMassa" class="form-control" placeholder="R$ 0,00" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Selecionar Meses:</label>
+                <div id="mesesMassa"></div>
+            </div>
+            <button class="btn btn-success" onclick="processarLancamentoMassa()">💾 Confirmar Lançamentos</button>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis Globais
+        let sistemaConfigurado = false;
+        let dadosSistema = {
+            configuracao: null,
+            tiposReceita: [],
+            tiposDespesa: [],
+            receitas: {},
+            despesas: {},
+            versao: '1.0'
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarDados();
+            inicializarSistema();
+        });
+
+        // Funções de Inicialização
+        function inicializarSistema() {
+            popularSelects();
+            verificarConfiguracao();
+            if (sistemaConfigurado) {
+                updateDashboard();
+            }
+        }
+
+        function popularSelects() {
+            const currentYear = new Date().getFullYear();
+            const months = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+
+            // Popular selects de mês
+            const monthSelects = ['mesInicio', 'currentMonth', 'mesReceita', 'mesDespesa'];
+            monthSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '';
+                    months.forEach((month, index) => {
+                        for (let year = currentYear - 2; year <= currentYear + 2; year++) {
+                            const option = document.createElement('option');
+                            option.value = `${year}-${String(index + 1).padStart(2, '0')}`;
+                            option.textContent = `${month}/${year}`;
+                            select.appendChild(option);
+                        }
+                    });
+                }
+            });
+
+            // Popular selects de ano
+            const yearSelects = ['anoInicio', 'anoRelatorio'];
+            yearSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '';
+                    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        if (year === currentYear) option.selected = true;
+                        select.appendChild(option);
+                    }
+                }
+            });
+
+            // Setar mês atual
+            const currentDate = new Date();
+            const currentMonthKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+            if (document.getElementById('currentMonth')) {
+                document.getElementById('currentMonth').value = currentMonthKey;
+            }
+        }
+
+        // Configuração do Sistema
+        function verificarConfiguracao() {
+            const statusEl = document.getElementById('configStatus');
+            if (dadosSistema.configuracao) {
+                sistemaConfigurado = true;
+                const config = dadosSistema.configuracao;
+                statusEl.innerHTML = `
+                    <div class="alert alert-success">
+                        ✅ Sistema configurado!<br>
+                        <strong>Início:</strong> ${config.mesInicio}/${config.anoInicio}<br>
+                        <strong>Saldo Inicial:</strong> ${formatarMoeda(config.saldoInicial)}
+                    </div>
+                `;
+                
+                // Preencher campos
+                document.getElementById('mesInicio').value = config.mesInicio;
+                document.getElementById('anoInicio').value = config.anoInicio;
+                document.getElementById('saldoInicial').value = config.saldoInicial;
+            } else {
+                statusEl.innerHTML = `
+                    <div class="alert alert-warning">
+                        ⚠️ Configure o sistema antes de começar a usar
+                    </div>
+                `;
+            }
+        }
+
+        function configurarSistema() {
+            const mesInicio = document.getElementById('mesInicio').value;
+            const anoInicio = parseInt(document.getElementById('anoInicio').value);
+            const saldoInicial = parseFloat(document.getElementById('saldoInicial').value) || 0;
+
+            dadosSistema.configuracao = {
+                mesInicio: parseInt(mesInicio),
+                anoInicio,
+                saldoInicial,
+                dataConfiguracao: new Date().toISOString()
+            };
+
+            // Adicionar saldo inicial como receita se maior que zero
+            if (saldoInicial > 0) {
+                const chaveInicial = `${anoInicio}-${String(mesInicio).padStart(2, '0')}`;
+                
+                // Criar tipo "Saldo Inicial" se não existir
+                if (!dadosSistema.tiposReceita.find(t => t.nome === 'Saldo Inicial')) {
+                    dadosSistema.tiposReceita.push({
+                        id: generateId(),
+                        nome: 'Saldo Inicial',
+                        dataCriacao: new Date().toISOString()
+                    });
+                }
+
+                // Adicionar receita de saldo inicial
+                if (!dadosSistema.receitas[chaveInicial]) {
+                    dadosSistema.receitas[chaveInicial] = [];
+                }
+
+                dadosSistema.receitas[chaveInicial].push({
+                    id: generateId(),
+                    tipo: 'Saldo Inicial',
+                    valor: saldoInicial,
+                    data: new Date().toISOString()
+                });
+            }
+
+            salvarDados();
+            sistemaConfigurado = true;
+            verificarConfiguracao();
+            atualizarSelectsTipos();
+            updateDashboard();
+
+            alert('✅ Sistema configurado com sucesso!');
+        }
+
+        // Funções de Tipos
+        function criarTipoReceita() {
+            const nome = document.getElementById('novoTipoReceita').value.trim();
+            if (!nome) {
+                alert('⚠️ Digite um nome para o tipo de receita');
+                return;
+            }
+
+            if (dadosSistema.tiposReceita.find(t => t.nome.toLowerCase() === nome.toLowerCase())) {
+                alert('⚠️ Este tipo já existe');
+                return;
+            }
+
+            dadosSistema.tiposReceita.push({
+                id: generateId(),
+                nome,
+                dataCriacao: new Date().toISOString()
+            });
+
+            document.getElementById('novoTipoReceita').value = '';
+            salvarDados();
+            atualizarSelectsTipos();
+            listarTiposReceita();
+            alert('✅ Tipo de receita criado com sucesso!');
+        }
+
+        function criarTipoDespesa() {
+            const nome = document.getElementById('novoTipoDespesa').value.trim();
+            if (!nome) {
+                alert('⚠️ Digite um nome para o tipo de despesa');
+                return;
+            }
+
+            if (dadosSistema.tiposDespesa.find(t => t.nome.toLowerCase() === nome.toLowerCase())) {
+                alert('⚠️ Este tipo já existe');
+                return;
+            }
+
+            dadosSistema.tiposDespesa.push({
+                id: generateId(),
+                nome,
+                dataCriacao: new Date().toISOString()
+            });
+
+            document.getElementById('novoTipoDespesa').value = '';
+            salvarDados();
+            atualizarSelectsTipos();
+            listarTiposDespesa();
+            alert('✅ Tipo de despesa criado com sucesso!');
+        }
+
+        function excluirTipoReceita(id) {
+            if (confirm('🗑️ Tem certeza que deseja excluir este tipo? Todos os lançamentos deste tipo serão removidos!')) {
+                const tipo = dadosSistema.tiposReceita.find(t => t.id === id);
+                if (tipo) {
+                    // Remover todas as receitas deste tipo
+                    Object.keys(dadosSistema.receitas).forEach(chave => {
+                        dadosSistema.receitas[chave] = dadosSistema.receitas[chave].filter(r => r.tipo !== tipo.nome);
+                        if (dadosSistema.receitas[chave].length === 0) {
+                            delete dadosSistema.receitas[chave];
+                        }
+                    });
+
+                    // Remover o tipo
+                    dadosSistema.tiposReceita = dadosSistema.tiposReceita.filter(t => t.id !== id);
+                    
+                    salvarDados();
+                    atualizarSelectsTipos();
+                    listarTiposReceita();
+                    updateDashboard();
+                    alert('✅ Tipo excluído com sucesso!');
+                }
+            }
+        }
+
+        function excluirTipoDespesa(id) {
+            if (confirm('🗑️ Tem certeza que deseja excluir este tipo? Todos os lançamentos deste tipo serão removidos!')) {
+                const tipo = dadosSistema.tiposDespesa.find(t => t.id === id);
+                if (tipo) {
+                    // Remover todas as despesas deste tipo
+                    Object.keys(dadosSistema.despesas).forEach(chave => {
+                        dadosSistema.despesas[chave] = dadosSistema.despesas[chave].filter(d => d.tipo !== tipo.nome);
+                        if (dadosSistema.despesas[chave].length === 0) {
+                            delete dadosSistema.despesas[chave];
+                        }
+                    });
+
+                    // Remover o tipo
+                    dadosSistema.tiposDespesa = dadosSistema.tiposDespesa.filter(t => t.id !== id);
+                    
+                    salvarDados();
+                    atualizarSelectsTipos();
+                    listarTiposDespesa();
+                    updateDashboard();
+                    alert('✅ Tipo excluído com sucesso!');
+                }
+            }
+        }
+
+        function atualizarSelectsTipos() {
+            // Atualizar select de receitas
+            const selectReceita = document.getElementById('tipoReceita');
+            if (selectReceita) {
+                selectReceita.innerHTML = '<option value="">Selecione um tipo...</option>';
+                dadosSistema.tiposReceita.forEach(tipo => {
+                    const option = document.createElement('option');
+                    option.value = tipo.nome;
+                    option.textContent = tipo.nome;
+                    selectReceita.appendChild(option);
+                });
+            }
+
+            // Atualizar select de despesas
+            const selectDespesa = document.getElementById('tipoDespesa');
+            if (selectDespesa) {
+                selectDespesa.innerHTML = '<option value="">Selecione um tipo...</option>';
+                dadosSistema.tiposDespesa.forEach(tipo => {
+                    const option = document.createElement('option');
+                    option.value = tipo.nome;
+                    option.textContent = tipo.nome;
+                    selectDespesa.appendChild(option);
+                });
+            }
+        }
+
+        function listarTiposReceita() {
+            const container = document.getElementById('tiposReceitaList');
+            if (!container) return;
+
+            if (dadosSistema.tiposReceita.length === 0) {
+                container.innerHTML = '<p class="alert alert-info">Nenhum tipo de receita cadastrado</p>';
+                return;
+            }
+
+            let html = '<h5 style="margin-top: 20px;">Tipos Cadastrados:</h5>';
+            dadosSistema.tiposReceita.forEach(tipo => {
+                html += `
+                    <div class="tipo-item">
+                        <span><strong>${tipo.nome}</strong></span>
+                        <button class="btn btn-danger" onclick="excluirTipoReceita('${tipo.id}')" style="padding: 5px 10px;">🗑️ Excluir</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function listarTiposDespesa() {
+            const container = document.getElementById('tiposDespesaList');
+            if (!container) return;
+
+            if (dadosSistema.tiposDespesa.length === 0) {
+                container.innerHTML = '<p class="alert alert-info">Nenhum tipo de despesa cadastrado</p>';
+                return;
+            }
+
+            let html = '<h5 style="margin-top: 20px;">Tipos Cadastrados:</h5>';
+            dadosSistema.tiposDespesa.forEach(tipo => {
+                html += `
+                    <div class="tipo-item">
+                        <span><strong>${tipo.nome}</strong></span>
+                        <button class="btn btn-danger" onclick="excluirTipoDespesa('${tipo.id}')" style="padding: 5px 10px;">🗑️ Excluir</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Funções de Lançamentos
+        function adicionarReceita() {
+            if (!sistemaConfigurado) {
+                alert('⚠️ Configure o sistema primeiro na aba Configuração');
+                return;
+            }
+
+            const tipo = document.getElementById('tipoReceita').value;
+            const valor = parseFloat(document.getElementById('valorReceita').value);
+            const mesAno = document.getElementById('mesReceita').value;
+
+            if (!tipo) {
+                alert('⚠️ Selecione um tipo de receita');
+                return;
+            }
+
+            if (!valor || valor <= 0) {
+                alert('⚠️ Digite um valor válido');
+                return;
+            }
+
+            if (!dadosSistema.receitas[mesAno]) {
+                dadosSistema.receitas[mesAno] = [];
+            }
+
+            dadosSistema.receitas[mesAno].push({
+                id: generateId(),
+                tipo,
+                valor,
+                data: new Date().toISOString()
+            });
+
+            document.getElementById('valorReceita').value = '';
+            salvarDados();
+            updateDashboard();
+            alert('✅ Receita adicionada com sucesso!');
+        }
+
+        function adicionarDespesa() {
+            if (!sistemaConfigurado) {
+                alert('⚠️ Configure o sistema primeiro na aba Configuração');
+                return;
+            }
+
+            const tipo = document.getElementById('tipoDespesa').value;
+            const valor = parseFloat(document.getElementById('valorDespesa').value);
+            const mesAno = document.getElementById('mesDespesa').value;
+
+            if (!tipo) {
+                alert('⚠️ Selecione um tipo de despesa');
+                return;
+            }
+
+            if (!valor || valor <= 0) {
+                alert('⚠️ Digite um valor válido');
+                return;
+            }
+
+            if (!dadosSistema.despesas[mesAno]) {
+                dadosSistema.despesas[mesAno] = [];
+            }
+
+            dadosSistema.despesas[mesAno].push({
+                id: generateId(),
+                tipo,
+                valor,
+                data: new Date().toISOString()
+            });
+
+            document.getElementById('valorDespesa').value = '';
+            salvarDados();
+            updateDashboard();
+            alert('✅ Despesa adicionada com sucesso!');
+        }
+
+        function excluirLancamento(tipo, mesAno, id) {
+            if (confirm('🗑️ Tem certeza que deseja excluir este lançamento?')) {
+                if (tipo === 'receita') {
+                    dadosSistema.receitas[mesAno] = dadosSistema.receitas[mesAno].filter(r => r.id !== id);
+                    if (dadosSistema.receitas[mesAno].length === 0) {
+                        delete dadosSistema.receitas[mesAno];
+                    }
+                } else {
+                    dadosSistema.despesas[mesAno] = dadosSistema.despesas[mesAno].filter(d => d.id !== id);
+                    if (dadosSistema.despesas[mesAno].length === 0) {
+                        delete dadosSistema.despesas[mesAno];
+                    }
+                }
+                
+                salvarDados();
+                updateDashboard();
+                alert('✅ Lançamento excluído com sucesso!');
+            }
+        }
+
+        // Funções de Dashboard
+        function updateDashboard() {
+            if (!sistemaConfigurado) {
+                document.getElementById('totalReceitas').textContent = 'Sistema não configurado';
+                return;
+            }
+
+            const mesAnoSelecionado = document.getElementById('currentMonth').value;
+            atualizarResumoMensal(mesAnoSelecionado);
+            listarLancamentosMes(mesAnoSelecionado);
+        }
+
+        function atualizarResumoMensal(mesAno) {
+            const receitas = dadosSistema.receitas[mesAno] || [];
+            const despesas = dadosSistema.despesas[mesAno] || [];
+
+            const totalReceitas = receitas.reduce((sum, r) => sum + r.valor, 0);
+            const totalDespesas = despesas.reduce((sum, d) => sum + d.valor, 0);
+            const saldoMes = totalReceitas - totalDespesas;
+
+            // Calcular saldo acumulado
+            const saldoAcumulado = calcularSaldoAcumulado(mesAno);
+
+            document.getElementById('totalReceitas').textContent = formatarMoeda(totalReceitas);
+            document.getElementById('totalDespesas').textContent = formatarMoeda(totalDespesas);
+            document.getElementById('saldoMes').textContent = formatarMoeda(saldoMes);
+            document.getElementById('saldoAcumulado').textContent = formatarMoeda(saldoAcumulado);
+
+            document.getElementById('receitasCount').textContent = `${receitas.length} lançamento${receitas.length !== 1 ? 's' : ''}`;
+            document.getElementById('despesasCount').textContent = `${despesas.length} lançamento${despesas.length !== 1 ? 's' : ''}`;
+        }
+
+        function calcularSaldoAcumulado(mesAnoAtual) {
+            if (!dadosSistema.configuracao) return 0;
+
+            let saldoAcumulado = 0;
+            const anoAtual = parseInt(mesAnoAtual.split('-')[0]);
+            const mesAtual = parseInt(mesAnoAtual.split('-')[1]);
+            
+            // Começar do mês de configuração
+            const anoInicio = dadosSistema.configuracao.anoInicio;
+            const mesInicio = dadosSistema.configuracao.mesInicio;
+
+            for (let ano = anoInicio; ano <= anoAtual; ano++) {
+                const mesInicioAno = (ano === anoInicio) ? mesInicio : 1;
+                const mesFinalAno = (ano === anoAtual) ? mesAtual : 12;
+
+                for (let mes = mesInicioAno; mes <= mesFinalAno; mes++) {
+                    const chave = `${ano}-${String(mes).padStart(2, '0')}`;
+                    const receitas = dadosSistema.receitas[chave] || [];
+                    const despesas = dadosSistema.despesas[chave] || [];
+                    
+                    const totalReceitas = receitas.reduce((sum, r) => sum + r.valor, 0);
+                    const totalDespesas = despesas.reduce((sum, d) => sum + d.valor, 0);
+                    
+                    saldoAcumulado += (totalReceitas - totalDespesas);
+                }
+            }
+
+            return saldoAcumulado;
+        }
+
+        function listarLancamentosMes(mesAno) {
+            const receitas = dadosSistema.receitas[mesAno] || [];
+            const despesas = dadosSistema.despesas[mesAno] || [];
+
+            // Listar receitas
+            const receitasList = document.getElementById('receitasList');
+            if (receitas.length === 0) {
+                receitasList.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #6c757d;">Nenhuma receita lançada neste mês</td></tr>';
+            } else {
+                let html = '';
+                receitas.forEach(receita => {
+                    html += `
+                        <tr>
+                            <td><strong>${receita.tipo}</strong></td>
+                            <td class="valor-receita">${formatarMoeda(receita.valor)}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="excluirLancamento('receita', '${mesAno}', '${receita.id}')" style="padding: 5px 10px; font-size: 0.8rem;">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                receitasList.innerHTML = html;
+            }
+
+            // Listar despesas
+            const despesasList = document.getElementById('despesasList');
+            if (despesas.length === 0) {
+                despesasList.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #6c757d;">Nenhuma despesa lançada neste mês</td></tr>';
+            } else {
+                let html = '';
+                despesas.forEach(despesa => {
+                    html += `
+                        <tr>
+                            <td><strong>${despesa.tipo}</strong></td>
+                            <td class="valor-despesa">${formatarMoeda(despesa.valor)}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="excluirLancamento('despesa', '${mesAno}', '${despesa.id}')" style="padding: 5px 10px; font-size: 0.8rem;">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                despesasList.innerHTML = html;
+            }
+        }
+
+        // Navegação de Meses
+        function goToPreviousMonth() {
+            const select = document.getElementById('currentMonth');
+            const currentIndex = select.selectedIndex;
+            if (currentIndex > 0) {
+                select.selectedIndex = currentIndex - 1;
+                updateDashboard();
+            }
+        }
+
+        function goToNextMonth() {
+            const select = document.getElementById('currentMonth');
+            const currentIndex = select.selectedIndex;
+            if (currentIndex < select.options.length - 1) {
+                select.selectedIndex = currentIndex + 1;
+                updateDashboard();
+            }
+        }
+
+        function goToCurrentMonth() {
+            const currentDate = new Date();
+            const currentMonthKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+            document.getElementById('currentMonth').value = currentMonthKey;
+            updateDashboard();
+        }
+
+        // Lançamento em Massa
+        function showModal(modalId, tipo) {
+            if (!sistemaConfigurado) {
+                alert('⚠️ Configure o sistema primeiro na aba Configuração');
+                return;
+            }
+
+            const modal = document.getElementById(modalId);
+            const tipoSelect = document.getElementById('tipoMassa');
+            const mesesContainer = document.getElementById('mesesMassa');
+
+            // Configurar modal
+            if (tipo === 'receita') {
+                document.getElementById('modalTitle').textContent = 'Lançamento de Receitas em Massa';
+                tipoSelect.innerHTML = '<option value="">Selecione um tipo...</option>';
+                dadosSistema.tiposReceita.forEach(t => {
+                    tipoSelect.innerHTML += `<option value="${t.nome}">${t.nome}</option>`;
+                });
+            } else {
+                document.getElementById('modalTitle').textContent = 'Lançamento de Despesas em Massa';
+                tipoSelect.innerHTML = '<option value="">Selecione um tipo...</option>';
+                dadosSistema.tiposDespesa.forEach(t => {
+                    tipoSelect.innerHTML += `<option value="${t.nome}">${t.nome}</option>`;
+                });
+            }
+
+            // Gerar checkboxes de meses
+            const currentYear = new Date().getFullYear();
+            const months = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+
+            let html = '';
+            for (let year = currentYear - 1; year <= currentYear + 2; year++) {
+                html += `<h6 style="margin-top: 15px; margin-bottom: 10px; color: #2c3e50;">${year}</h6>`;
+                months.forEach((month, index) => {
+                    const value = `${year}-${String(index + 1).padStart(2, '0')}`;
+                    html += `
+                        <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                            <input type="checkbox" value="${value}" style="margin-right: 8px;">
+                            ${month}/${year}
+                        </label>
+                    `;
+                });
+            }
+            mesesContainer.innerHTML = html;
+
+            modal.tipoLancamento = tipo;
+            modal.classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function processarLancamentoMassa() {
+            const tipo = document.getElementById('tipoMassa').value;
+            const valor = parseFloat(document.getElementById('valorMassa').value);
+            const modal = document.getElementById('modalLancamentoMassa');
+            const tipoLancamento = modal.tipoLancamento;
+
+            if (!tipo) {
+                alert('⚠️ Selecione um tipo');
+                return;
+            }
+
+            if (!valor || valor <= 0) {
+                alert('⚠️ Digite um valor válido');
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll('#mesesMassa input[type="checkbox"]:checked');
+            if (checkboxes.length === 0) {
+                alert('⚠️ Selecione pelo menos um mês');
+                return;
+            }
+
+            let contador = 0;
+            checkboxes.forEach(checkbox => {
+                const mesAno = checkbox.value;
+                
+                if (tipoLancamento === 'receita') {
+                    if (!dadosSistema.receitas[mesAno]) {
+                        dadosSistema.receitas[mesAno] = [];
+                    }
+                    dadosSistema.receitas[mesAno].push({
+                        id: generateId(),
+                        tipo,
+                        valor,
+                        data: new Date().toISOString()
+                    });
+                } else {
+                    if (!dadosSistema.despesas[mesAno]) {
+                        dadosSistema.despesas[mesAno] = [];
+                    }
+                    dadosSistema.despesas[mesAno].push({
+                        id: generateId(),
+                        tipo,
+                        valor,
+                        data: new Date().toISOString()
+                    });
+                }
+                contador++;
+            });
+
+            salvarDados();
+            updateDashboard();
+            closeModal('modalLancamentoMassa');
+            
+            document.getElementById('valorMassa').value = '';
+            
+            alert(`✅ ${contador} lançamentos adicionados com sucesso!`);
+        }
+
+        // Relatórios
+        function gerarRelatorioAnual() {
+            if (!sistemaConfigurado) {
+                document.getElementById('relatorioAnual').innerHTML = '<p class="alert alert-warning">Configure o sistema primeiro</p>';
+                return;
+            }
+
+            const ano = parseInt(document.getElementById('anoRelatorio').value);
+            const container = document.getElementById('relatorioAnual');
+
+            let html = `
+                <div class="card" style="margin-top: 20px;">
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mês</th>
+                                    <th style="color: #28a745;">Receitas</th>
+                                    <th style="color: #dc3545;">Despesas</th>
+                                    <th style="color: #667eea;">Saldo do Mês</th>
+                                    <th style="color: #667eea;">Saldo Acumulado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            const months = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+
+            let saldoAcumuladoAnual = 0;
+            let totalReceitasAno = 0;
+            let totalDespesasAno = 0;
+
+            for (let mes = 1; mes <= 12; mes++) {
+                const chave = `${ano}-${String(mes).padStart(2, '0')}`;
+                const receitas = dadosSistema.receitas[chave] || [];
+                const despesas = dadosSistema.despesas[chave] || [];
+
+                const totalReceitas = receitas.reduce((sum, r) => sum + r.valor, 0);
+                const totalDespesas = despesas.reduce((sum, d) => sum + d.valor, 0);
+                const saldoMes = totalReceitas - totalDespesas;
+
+                // Calcular saldo acumulado real (considerando histórico)
+                const saldoAcumuladoReal = calcularSaldoAcumulado(chave);
+                
+                totalReceitasAno += totalReceitas;
+                totalDespesasAno += totalDespesas;
+
+                html += `
+                    <tr>
+                        <td><strong>${months[mes - 1]}</strong></td>
+                        <td class="valor-receita">${formatarMoeda(totalReceitas)}</td>
+                        <td class="valor-despesa">${formatarMoeda(totalDespesas)}</td>
+                        <td style="color: ${saldoMes >= 0 ? '#28a745' : '#dc3545'}; font-weight: 600;">${formatarMoeda(saldoMes)}</td>
+                        <td style="color: ${saldoAcumuladoReal >= 0 ? '#28a745' : '#dc3545'}; font-weight: 600;">${formatarMoeda(saldoAcumuladoReal)}</td>
+                    </tr>
+                `;
+            }
+
+            const saldoTotalAno = totalReceitasAno - totalDespesasAno;
+
+            html += `
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #f8f9fa; font-weight: bold;">
+                            <td><strong>TOTAL ${ano}</strong></td>
+                            <td class="valor-receita">${formatarMoeda(totalReceitasAno)}</td>
+                            <td class="valor-despesa">${formatarMoeda(totalDespesasAno)}</td>
+                            <td style="color: ${saldoTotalAno >= 0 ? '#28a745' : '#dc3545'};">${formatarMoeda(saldoTotalAno)}</td>
+                            <td>-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Funções de Navegação
+        function showTab(tabName) {
+            // Esconder todas as abas
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remover classe ativa dos botões
+            const buttons = document.querySelectorAll('.nav-tab');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Mostrar aba selecionada
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Carregar dados específicos da aba
+            if (tabName === 'configuracao') {
+                verificarConfiguracao();
+            } else if (tabName === 'receitas') {
+                atualizarSelectsTipos();
+                listarTiposReceita();
+            } else if (tabName === 'despesas') {
+                atualizarSelectsTipos();
+                listarTiposDespesa();
+            } else if (tabName === 'relatorios') {
+                gerarRelatorioAnual();
+            }
+        }
+
+        // Funções de Backup
+        function exportData() {
+            const dataStr = JSON.stringify(dadosSistema, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `backup-financeiro-${new Date().toISOString().slice(0, 10)}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            alert('✅ Backup exportado com sucesso!');
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (file.type !== 'application/json') {
+                alert('⚠️ Por favor, selecione um arquivo JSON válido');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (confirm('⚠️ Importar dados irá sobrescrever todos os dados atuais. Tem certeza?')) {
+                        dadosSistema = importedData;
+                        salvarDados();
+                        sistemaConfigurado = dadosSistema.configuracao !== null;
+                        inicializarSistema();
+                        alert('✅ Dados importados com sucesso!');
+                    }
+                } catch (error) {
+                    alert('❌ Erro ao importar arquivo. Verifique se é um backup válido.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Funções Auxiliares
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function salvarDados() {
+            dadosSistema.ultimaAtualizacao = new Date().toISOString();
+            localStorage.setItem('sistemaFinanceiro', JSON.stringify(dadosSistema));
+        }
+
+        function carregarDados() {
+            const dados = localStorage.getItem('sistemaFinanceiro');
+            if (dados) {
+                try {
+                    dadosSistema = JSON.parse(dados);
+                    sistemaConfigurado = dadosSistema.configuracao !== null;
+                } catch (error) {
+                    console.error('Erro ao carregar dados:', error);
+                }
+            }
+        }
+
+        // Auto-save a cada 30 segundos
+        setInterval(() => {
+            if (sistemaConfigurado) {
+                salvarDados();
+            }
+        }, 30000);
+
+        // Salvar antes de fechar a página
+        window.addEventListener('beforeunload', salvarDados);
+    </script>
+</body>
+</html>
